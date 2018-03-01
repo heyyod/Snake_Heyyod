@@ -49,6 +49,11 @@ private:
 	void ResetForNewRound();
 	void ResetForNewGame();
 
+	// MODES
+	void NormalMode();
+	void ObstacleMode();
+	void PoisonMode();
+
 private:
 	MainWindow& wnd;
 	Graphics gfx;
@@ -71,10 +76,21 @@ private:
 	bool playAgain = false;
 	int lostLives = 0;
 
+	int chosenMode = 0; // 0: Show modes to choose, 1: normal, 2: obstacle, 3: poison.
+
 	//HIGH GOAL VARIABLES
 	int highGoalSpawnPeriod = 60;
 	int highGoalStayPeriod = 30;
 	int countToSpawnHighGoal = 0;
 	int countToDespawnHighGoal = 0;
 	bool highGoalSpawned = false;
+
+	// STARTING SCREEN UI
+	static constexpr int ModesPosX = 220;
+
+	static constexpr int chooseModePosY = 260 - 100;
+	static constexpr int normalModePosY = 260 - 50;
+	static constexpr int obstacleModePosY = 260 - 20;
+	static constexpr int poisonModePosY = 260 + 10;
+
 };

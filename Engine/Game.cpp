@@ -98,7 +98,7 @@ void Game::UpdateModel()
 			{
 				gameIsWon = true;
 			}
-						
+
 			//PAUSE AND UNPAUSE GAME
 			if (wnd.kbd.KeyIsPressed(VK_PAUSE) && !gameIsPaused)
 			{
@@ -112,10 +112,40 @@ void Game::UpdateModel()
 	}
 	else
 	{
-		if (wnd.kbd.KeyIsPressed(VK_RETURN))
+		const int mouseX = wnd.mouse.GetPosX();
+		const int mouseY = wnd.mouse.GetPosY();
+
+		if ((mouseX >= (ModesPosX - 150)) && (mouseX <= (ModesPosX + 150)))
 		{
-			gameIsStarted = true;
+			if ((mouseY >= (normalModePosY - 9)) && (mouseY <= (normalModePosY + 9)))
+			{
+				chosenMode = 1;
+				if (wnd.mouse.LeftIsPressed())
+				{
+					gameIsStarted = true;
+				}
+			}
+			else if ((mouseY >= (obstacleModePosY - 9)) && (mouseY <= (obstacleModePosY + 9)))
+			{
+				chosenMode = 2;
+				if (wnd.mouse.LeftIsPressed())
+				{
+					gameIsStarted = true;
+				}
+			}
+			else if ((mouseY >= (poisonModePosY - 9)) && (mouseY <= (poisonModePosY + 9)))
+			{
+				chosenMode = 3;
+				if (wnd.mouse.LeftIsPressed())
+				{
+					gameIsStarted = true;
+				}
+			}
+			else
+				chosenMode = 0;
 		}
+		else
+			chosenMode = 0;
 	}
 }
 
@@ -254,47 +284,65 @@ void Game::ResetForNewGame()
 	score.Reset();
 }
 
+void Game::NormalMode()
+{
+}
+
 void Game::ComposeFrame()
 {
-	score.DrawScorePanel(gfx);	
-	for (int i = 0; i < 3 - lostLives; ++i)
+	if (chosenMode == 0 || !gameIsStarted)
 	{
-		Lives::DrawRed(355 + i * 40, 13, gfx);
-	}
-	brd.DrawBorder();
-	
-	if (gameIsStarted)
-	{
-		goal.Draw(brd);
-		if (highGoalSpawned)
-		{
-			highgoal.UpdateColor();
-			highgoal.Draw(brd);
-		}
-		snek.Draw(brd);
+		SpriteCodex::DrawChooseMode(ModesPosX, chooseModePosY, gfx);
+		SpriteCodex::DrawNormalMode(ModesPosX, normalModePosY, gfx);
+		SpriteCodex::DrawObstacleMode(ModesPosX, obstacleModePosY, gfx);
+		SpriteCodex::DrawPoisonMode(ModesPosX, poisonModePosY, gfx);
 
-		if (gameIsPaused)
-		{
-			SpriteCodex::DrawPause(157, 230, gfx);
-		}
+		if (chosenMode == 1) { SpriteCodex::DrawNormalModeSelected(ModesPosX, normalModePosY, gfx); }
+		if (chosenMode == 2) { SpriteCodex::DrawObstacleModeSelected(ModesPosX, obstacleModePosY, gfx); }
+		if (chosenMode == 3) { SpriteCodex::DrawPoisonModeSelected(ModesPosX, poisonModePosY, gfx); }
 	}
 	else
 	{
-		SpriteCodex::DrawTitle(133, 200, gfx);
-	}
-	
-	if (gameIsOver)
-	{
-		SpriteCodex::DrawGameOver(198, 268, gfx);
-		if (lostLives < 3)
+		score.DrawScorePanel(gfx);
+		for (int i = 0; i < 3 - lostLives; ++i)
 		{
-			SpriteCodex::DrawPressC(165, 465, gfx);
+			Lives::DrawRed(355 + i * 40, 13, gfx);
 		}
-		SpriteCodex::DrawPressR(167, 470, gfx);
-	}
-	if (gameIsWon)
-	{
-		SpriteCodex::DrawYouWin(146, 210, gfx);
-		SpriteCodex::DrawPressR(167, 470, gfx);
+		brd.DrawBorder();
+
+		if (gameIsStarted)
+		{
+			goal.Draw(brd);
+			if (highGoalSpawned)
+			{
+				highgoal.UpdateColor();
+				highgoal.Draw(brd);
+			}
+			snek.Draw(brd);
+
+			if (gameIsPaused)
+			{
+				SpriteCodex::DrawPause(157, 230, gfx);
+			}
+		}
+		else
+		{
+			SpriteCodex::DrawTitle(133, 200, gfx);
+		}
+
+		if (gameIsOver)
+		{
+			SpriteCodex::DrawGameOver(198, 268, gfx);
+			if (lostLives < 3)
+			{
+				SpriteCodex::DrawPressC(165, 465, gfx);
+			}
+			SpriteCodex::DrawPressR(167, 470, gfx);
+		}
+		if (gameIsWon)
+		{
+			SpriteCodex::DrawYouWin(146, 210, gfx);
+			SpriteCodex::DrawPressR(167, 470, gfx);
+		}
 	}
 }
