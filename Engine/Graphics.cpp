@@ -240,6 +240,16 @@ Graphics::Graphics( HWNDKey& key )
 		_aligned_malloc( sizeof( Color ) * Graphics::ScreenWidth * Graphics::ScreenHeight,16u ) );
 }
 
+int Graphics::GetWidthCenter() const
+{
+	return ScreenWidth / 2;
+}
+
+int Graphics::GetHeightCenter() const
+{
+	return ScreenHeight / 2;
+}
+
 Graphics::~Graphics()
 {
 	// free sysbuffer memory (aligned free)
