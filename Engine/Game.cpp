@@ -145,6 +145,10 @@ void Game::UpdateModel()
 				gameIsWon = true;
 			}
 
+			if (lostLives == 3)
+				gameIsOver = true;
+
+
 			//PAUSE AND UNPAUSE GAME
 			if (wnd.kbd.KeyIsPressed(VK_PAUSE) && !gameIsPaused)
 			{
