@@ -58604,3 +58604,10 @@ void SpriteCodex::DrawGO(int x_center, int y_center, Graphics & gfx)
 	gfx.PutPixel(34 + x, 17 + y, 181, 230, 29);
 	gfx.PutPixel(35 + x, 17 + y, 181, 230, 29);
 }
+
+void SpriteCodex::DrawBackground(Graphics & gfx)
+{
+	for (int x = 0; x < gfx.ScreenWidth; ++x)
+		for (int y = 0; y < gfx.ScreenHeight; ++y)
+			gfx.PutPixel(x, y, Color{ 150,200,150 });
+}

@@ -48,9 +48,7 @@ void Game::UpdateModel()
 	startingDelay += dt;
 
 	if (wnd.kbd.KeyIsPressed(VK_RETURN) && gameIsPaused)
-	{
 		gameIsPaused = false;
-	}
 	
 	if (gameIsStarted && !gameIsPaused)
 	{
@@ -88,7 +86,6 @@ void Game::UpdateModel()
 					if (chosenMode == 2 && brd.CheckForObstacle(nextHeadLoc))
 					{
 						snekSizeBeforeCol = snek.GetCurrentSize();
-
 						++lostLives;
 						touchedAnObstacle = true;
 						brd.DespawnObstacle(nextHeadLoc);
@@ -111,9 +108,7 @@ void Game::UpdateModel()
 								goal.Respawn(rng, brd, snek);
 
 								if (chosenMode == 2)
-								{
 									brd.SpawnObstacle(rng, snek, goal);
-								}
 							}
 							snek.MoveBy(delta_loc);
 
@@ -135,35 +130,23 @@ void Game::UpdateModel()
 					}
 				}
 				else
-				{
 					touchedAnObstacle = false;
-				}
 			}
 
 			if (snek.IsMaxSize())
-			{
 				gameIsWon = true;
-			}
-
+			
 			if (lostLives == 3)
 				gameIsOver = true;
-
-
-			//PAUSE AND UNPAUSE GAME
+			
 			if (wnd.kbd.KeyIsPressed(VK_PAUSE) && !gameIsPaused)
-			{
 				gameIsPaused = true;
-			}
 		}
 		else
-		{
 			AskToPlayAgain();
-		}
 	}
 	else
-	{
 		AskToChooseMode(wnd.mouse);
-	}
 }
 
 // APPLIES TO NORMAL AND OBSTACLE MODE ONLY
@@ -172,9 +155,7 @@ void Game::TimingAdjustments()
 	//CHANGE SPEED AND HIGH GOAL SPAWN TIME
 	{
 		if (score.GetScore() >= 50)
-		{
 			snekPeriod = 25;
-		}
 		if (score.GetScore() >= 100)
 		{
 			snekPeriod = 20;
@@ -188,17 +169,11 @@ void Game::TimingAdjustments()
 			highGoalStayPeriod = 50;
 		}
 		if (score.GetScore() >= 500)
-		{
 			snekPeriod = 10;
-		}
 		if (score.GetScore() >= 1000)
-		{
 			snekPeriod = 8;
-		}
 		if (score.GetScore() >= 2000)
-		{
 			snekPeriod = 5;
-		}
 	}
 }
 
@@ -212,13 +187,9 @@ void Game::HighGoalBehaviour()
 		if (eatingHighGoal)
 		{
 			for (int i = 0; i < 2; ++i)
-			{
 				snek.Grow();
-			}
 			for (int i = 0; i < 5; ++i)
-			{
 				score.IncreaseScore();
-			}
 
 			countToDespawnHighGoal = 0;
 			highGoalSpawned = false;
@@ -244,13 +215,9 @@ void Game::HighGoalBehaviour()
 void Game::AskToPlayAgain()
 {
 	if (wnd.kbd.KeyIsPressed('C') && !gameIsWon && lostLives < 3) //CAN'T CONTINUE IF GAME IS WON OR IF I HAVE NO MORE LIVES
-	{
 		ResetForNewRound();
-	}
 	if (wnd.kbd.KeyIsPressed('R'))
-	{
 		ResetForNewGame();
-	}
 }
 
 void Game::ResetForNewRound()
@@ -300,17 +267,11 @@ void Game::AskToChooseMode(const Mouse & mouse)
 	if ((mouseX >= (ModesPosX - 150)) && (mouseX <= (ModesPosX + 150)))
 	{
 		if ((mouseY >= (normalModePosY - 9)) && (mouseY <= (normalModePosY + 9)))
-		{
 			chosenMode = 1;
-		}
 		else if ((mouseY >= (obstacleModePosY - 9)) && (mouseY <= (obstacleModePosY + 9)))
-		{
 			chosenMode = 2;
-		}
 		else if ((mouseY >= (poisonModePosY - 9)) && (mouseY <= (poisonModePosY + 9)))
-		{
 			chosenMode = 3;
-		}
 		else
 			chosenMode = 0;
 	}
@@ -323,15 +284,14 @@ void Game::AskToChooseMode(const Mouse & mouse)
 		startingDelay = 0.0f;
 	}
 	else
-	{
 		gameIsStarted = false;
-	}
 }
 
 void Game::ComposeFrame()
 {
 	if (!gameIsStarted)
 	{
+		// DRAWING OF THE UI AT THE START OF THE GAME
 		SpriteCodex::DrawChooseMode(ModesPosX, chooseModePosY, gfx);
 
 		if (chosenMode == 1)
@@ -344,7 +304,7 @@ void Game::ComposeFrame()
 		else
 			SpriteCodex::DrawObstacleMode(ModesPosX, obstacleModePosY, gfx);
 
-		if (chosenMode == 3) 
+		if (chosenMode == 3)
 			SpriteCodex::DrawPoisonModeSelected(ModesPosX, poisonModePosY, gfx);
 		else
 			SpriteCodex::DrawPoisonMode(ModesPosX, poisonModePosY, gfx);
@@ -352,45 +312,43 @@ void Game::ComposeFrame()
 	}
 	else
 	{
-		score.DrawScorePanel(gfx);
-		for (int i = 0; i < 3 - lostLives; ++i)
-		{
-			Lives::DrawRed(355 + i * 40, 13, gfx);
-		}
 		brd.DrawBorder();
 
-		if (gameIsStarted)
-		{
-			if (startingDelay > 4)
-			{
-				brd.DrawObstacles();
-				
-				goal.Draw(brd);
-				if (highGoalSpawned)
-				{
-					highgoal.UpdateColor();
-					highgoal.Draw(brd);
-				}
-				
-				snek.Draw(brd);
+		score.DrawScorePanel(gfx);
 
-				if (gameIsPaused)
-				{
-					SpriteCodex::DrawPause(157, 230, gfx);
-				}
-			}
-			else
+		for (int i = 0; i < 3 - lostLives; ++i)
+			Lives::DrawRed(355 + i * 40, 13, gfx);
+
+		if (startingDelay > 4)
+		{
+			if (chosenMode == 2)
+				brd.DrawObstacles();
+
+			goal.Draw(brd);
+			if (highGoalSpawned)
 			{
-				if (startingDelay <= 1)
-					SpriteCodex::DrawNumber3(240, 260, gfx);
-				else if (startingDelay <= 2)
-					SpriteCodex::DrawNumber2(240, 260, gfx);
-				else if (startingDelay <= 3)
-					SpriteCodex::DrawNumber1(240, 260, gfx);
-				else if (startingDelay <= 4)
-					SpriteCodex::DrawGO(240, 260, gfx);
+				highgoal.UpdateColor();
+				highgoal.Draw(brd);
 			}
+
+			snek.Draw(brd);
+
+			if (gameIsPaused)
+				SpriteCodex::DrawPause(157, 230, gfx);
 		}
+		else
+		{
+			// DRAW COUNTDOWN TIMER BEFORE YOU CAN PLAY THE GAME
+			if (startingDelay <= 1)
+				SpriteCodex::DrawNumber3(240, 260, gfx);
+			else if (startingDelay <= 2)
+				SpriteCodex::DrawNumber2(240, 260, gfx);
+			else if (startingDelay <= 3)
+				SpriteCodex::DrawNumber1(240, 260, gfx);
+			else if (startingDelay <= 4)
+				SpriteCodex::DrawGO(240, 260, gfx);
+		}
+
 
 		if (gameIsOver)
 		{

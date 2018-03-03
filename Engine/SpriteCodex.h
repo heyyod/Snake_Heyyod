@@ -24,4 +24,6 @@ public:
 	static void DrawNumber2(int x_center, int y_center, Graphics& gfx);
 	static void DrawNumber3(int x_center, int y_center, Graphics& gfx);
 	static void DrawGO(int x_center, int y_center, Graphics& gfx);
+
+	static void DrawBackground(Graphics& gfx);
 };
