@@ -112,40 +112,7 @@ void Game::UpdateModel()
 	}
 	else
 	{
-		const int mouseX = wnd.mouse.GetPosX();
-		const int mouseY = wnd.mouse.GetPosY();
-
-		if ((mouseX >= (ModesPosX - 150)) && (mouseX <= (ModesPosX + 150)))
-		{
-			if ((mouseY >= (normalModePosY - 9)) && (mouseY <= (normalModePosY + 9)))
-			{
-				chosenMode = 1;
-				if (wnd.mouse.LeftIsPressed())
-				{
-					gameIsStarted = true;
-				}
-			}
-			else if ((mouseY >= (obstacleModePosY - 9)) && (mouseY <= (obstacleModePosY + 9)))
-			{
-				chosenMode = 2;
-				if (wnd.mouse.LeftIsPressed())
-				{
-					gameIsStarted = true;
-				}
-			}
-			else if ((mouseY >= (poisonModePosY - 9)) && (mouseY <= (poisonModePosY + 9)))
-			{
-				chosenMode = 3;
-				if (wnd.mouse.LeftIsPressed())
-				{
-					gameIsStarted = true;
-				}
-			}
-			else
-				chosenMode = 0;
-		}
-		else
-			chosenMode = 0;
+		ChooseMode(wnd.mouse);
 	}
 }
 
@@ -284,22 +251,69 @@ void Game::ResetForNewGame()
 	score.Reset();
 }
 
+void Game::ChooseMode(const Mouse & mouse)
+{
+	const int mouseX = wnd.mouse.GetPosX();
+	const int mouseY = wnd.mouse.GetPosY();
+
+	if ((mouseX >= (ModesPosX - 150)) && (mouseX <= (ModesPosX + 150)))
+	{
+		if ((mouseY >= (normalModePosY - 9)) && (mouseY <= (normalModePosY + 9)))
+		{
+			chosenMode = 1;
+			if (wnd.mouse.LeftIsPressed())
+			{
+				gameIsStarted = true;
+			}
+		}
+		else if ((mouseY >= (obstacleModePosY - 9)) && (mouseY <= (obstacleModePosY + 9)))
+		{
+			chosenMode = 2;
+			if (wnd.mouse.LeftIsPressed())
+			{
+				gameIsStarted = true;
+			}
+		}
+		else if ((mouseY >= (poisonModePosY - 9)) && (mouseY <= (poisonModePosY + 9)))
+		{
+			chosenMode = 3;
+			if (wnd.mouse.LeftIsPressed())
+			{
+				gameIsStarted = true;
+			}
+		}
+		else
+			chosenMode = 0;
+	}
+	else
+		chosenMode = 0;
+}
+
 void Game::NormalMode()
 {
 }
 
 void Game::ComposeFrame()
 {
-	if (chosenMode == 0 || !gameIsStarted)
+	if (!gameIsStarted)
 	{
 		SpriteCodex::DrawChooseMode(ModesPosX, chooseModePosY, gfx);
-		SpriteCodex::DrawNormalMode(ModesPosX, normalModePosY, gfx);
-		SpriteCodex::DrawObstacleMode(ModesPosX, obstacleModePosY, gfx);
-		SpriteCodex::DrawPoisonMode(ModesPosX, poisonModePosY, gfx);
 
-		if (chosenMode == 1) { SpriteCodex::DrawNormalModeSelected(ModesPosX, normalModePosY, gfx); }
-		if (chosenMode == 2) { SpriteCodex::DrawObstacleModeSelected(ModesPosX, obstacleModePosY, gfx); }
-		if (chosenMode == 3) { SpriteCodex::DrawPoisonModeSelected(ModesPosX, poisonModePosY, gfx); }
+		if (chosenMode == 1)
+			SpriteCodex::DrawNormalModeSelected(ModesPosX, normalModePosY, gfx);
+		else
+			SpriteCodex::DrawNormalMode(ModesPosX, normalModePosY, gfx);
+
+		if (chosenMode == 2)
+			SpriteCodex::DrawObstacleModeSelected(ModesPosX, obstacleModePosY, gfx);
+		else
+			SpriteCodex::DrawObstacleMode(ModesPosX, obstacleModePosY, gfx);
+
+		if (chosenMode == 3) 
+			SpriteCodex::DrawPoisonModeSelected(ModesPosX, poisonModePosY, gfx);
+		else
+			SpriteCodex::DrawPoisonMode(ModesPosX, poisonModePosY, gfx);
+
 	}
 	else
 	{

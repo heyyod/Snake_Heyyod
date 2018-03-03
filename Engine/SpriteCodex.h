@@ -19,4 +19,9 @@ public:
 	static void DrawObstacleModeSelected(int x_center, int y_center, Graphics& gfx);
 	static void DrawPoisonMode(int x_center, int y_center, Graphics& gfx); // 94 x 18
 	static void DrawPoisonModeSelected(int x_center, int y_center, Graphics& gfx);
+
+	static void DrawNumber1(int x_center, int y_center, Graphics& gfx);
+	static void DrawNumber2(int x_center, int y_center, Graphics& gfx);
+	static void DrawNumber3(int x_center, int y_center, Graphics& gfx);
+	static void DrawGO(int x_center, int y_center, Graphics& gfx);
 };

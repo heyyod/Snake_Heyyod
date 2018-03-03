@@ -31,6 +31,7 @@
 #include "HighGoal.h"
 #include "Lives.h"
 #include <random>
+#include "FrameTimer.h"
 
 class Game
 {
@@ -48,6 +49,7 @@ private:
 	void AskToPlayAgain();
 	void ResetForNewRound();
 	void ResetForNewGame();
+	void ChooseMode(const Mouse& mouse);
 
 	// MODES
 	void NormalMode();
@@ -86,11 +88,11 @@ private:
 	bool highGoalSpawned = false;
 
 	// STARTING SCREEN UI
-	static constexpr int ModesPosX = 220;
-
+	static constexpr int ModesPosX = 240;
 	static constexpr int chooseModePosY = 260 - 100;
 	static constexpr int normalModePosY = 260 - 50;
 	static constexpr int obstacleModePosY = 260 - 20;
 	static constexpr int poisonModePosY = 260 + 10;
 
+	FrameTimer ft;
 };
