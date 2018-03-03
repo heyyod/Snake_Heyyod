@@ -119,6 +119,7 @@ void Game::UpdateModel()
 	}
 }
 
+// APPLIES TO NORMAL AND OBSTACLE MODE ONLY
 void Game::GameAdjustments()
 {
 	//CHANGE SPEED AND HIGH GOAL SPAWN TIME
@@ -222,6 +223,7 @@ void Game::AskToPlayAgain()
 
 void Game::ResetForNewRound()
 {
+	startingTimer = 0.0f;
 	gameIsOver = false;
 	gameIsWon = false;
 
@@ -237,6 +239,8 @@ void Game::ResetForNewRound()
 
 void Game::ResetForNewGame()
 {
+	startingTimer = 0.0f;
+	gameIsStarted = false;
 	gameIsOver = false;
 	gameIsWon = false;
 
@@ -279,7 +283,7 @@ void Game::ChooseMode(const Mouse & mouse)
 	else
 		chosenMode = 0;
 
-	if (wnd.mouse.LeftIsPressed())
+	if (wnd.mouse.LeftIsPressed() && chosenMode != 0)
 	{
 		gameIsStarted = true;
 		startingTimer = 0.0f;
