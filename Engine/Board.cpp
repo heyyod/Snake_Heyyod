@@ -65,7 +65,7 @@ bool Board::CheckForObstacle(const Location& loc) const
 	return hasObstacle[loc.y * width + loc.x];
 }
 
-void Board::SpawnObstacle(std::mt19937 rng, const Snake & snake, const Goal & goal)
+void Board::SpawnObstacle(std::mt19937& rng, const Snake & snake, const Goal & goal)
 {
 	std::uniform_int_distribution<int> xDist(0, GetGridWidth() - 1);
 	std::uniform_int_distribution<int> yDist(0, GetGridHeight() - 1);

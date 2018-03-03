@@ -15,7 +15,7 @@ public:
 	int GetGridHeight() const;
 	int GetDimension() const;
 	bool CheckForObstacle(const Location& loc) const;
-	void SpawnObstacle( std::mt19937 rng, const class Snake& snake, const class Goal& goal);
+	void SpawnObstacle( std::mt19937& rng, const class Snake& snake, const class Goal& goal);
 	void DrawObstacles();
 	void ResetObstacles();
 
