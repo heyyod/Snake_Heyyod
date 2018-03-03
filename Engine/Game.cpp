@@ -45,73 +45,98 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	float dt = ft.Mark();
-	startingTimer += dt;
+	startingDelay += dt;
 
 	if (wnd.kbd.KeyIsPressed(VK_RETURN) && gameIsPaused)
 	{
 		gameIsPaused = false;
 	}
-
-	if (gameIsStarted && !gameIsPaused )
+	
+	if (gameIsStarted && !gameIsPaused)
 	{
-		if (!gameIsOver && !gameIsWon && startingTimer > 4.0f)
+		if (!gameIsOver && !gameIsWon && startingDelay > 4.0f )
 		{
-			//MOVE THE SNAKE
-			if (wnd.kbd.KeyIsPressed(VK_UP) && old_delta_loc.y != 1)
+			if (!touchedAnObstacle)
 			{
-				delta_loc = { 0,-1 };
-			}
-			if (wnd.kbd.KeyIsPressed(VK_DOWN) && old_delta_loc.y != -1)
-			{
-				delta_loc = { 0,1 };
-			}
-			if (wnd.kbd.KeyIsPressed(VK_LEFT) && old_delta_loc.x != 1)
-			{
-				delta_loc = { -1,0 };
-			}
-			if (wnd.kbd.KeyIsPressed(VK_RIGHT) && old_delta_loc.x != -1)
-			{
-				delta_loc = { 1,0 };
-			}
-
-			TimingAdjustments();
-			++snekMoveCounter;
-			
-			if (snekMoveCounter >= snekPeriod)
-			{
-				snekMoveCounter = 0;
-				Location nextHeadLoc = snek.GetNextHeadLocation(delta_loc);
-				old_delta_loc = delta_loc;
-				
-				if ( chosenMode == 2 && brd.CheckForObstacle(nextHeadLoc))
+				//MOVE THE SNAKE
+				if (wnd.kbd.KeyIsPressed(VK_UP) && old_delta_loc.y != 1)
 				{
-					++lostLives;
-					gameIsOver = true;
+					delta_loc = { 0,-1 };
+				}
+				if (wnd.kbd.KeyIsPressed(VK_DOWN) && old_delta_loc.y != -1)
+				{
+					delta_loc = { 0,1 };
+				}
+				if (wnd.kbd.KeyIsPressed(VK_LEFT) && old_delta_loc.x != 1)
+				{
+					delta_loc = { -1,0 };
+				}
+				if (wnd.kbd.KeyIsPressed(VK_RIGHT) && old_delta_loc.x != -1)
+				{
+					delta_loc = { 1,0 };
 				}
 
-				if (!brd.IsInsideBoard(nextHeadLoc) ||
-					snek.HeadIsInsiteTile(nextHeadLoc))
+				TimingAdjustments();
+				++snekMoveCounter;
+
+				if (snekMoveCounter >= snekPeriod)
 				{
-					++lostLives;
-					gameIsOver = true;
+					snekMoveCounter = 0;
+					Location nextHeadLoc = snek.GetNextHeadLocation(delta_loc);
+					old_delta_loc = delta_loc;
+
+					if (chosenMode == 2 && brd.CheckForObstacle(nextHeadLoc))
+					{
+						snekSizeBeforeCol = snek.GetCurrentSize();
+
+						++lostLives;
+						touchedAnObstacle = true;
+						brd.DespawnObstacle(nextHeadLoc);
+					}
+
+					if (!touchedAnObstacle)
+					{
+						if (!brd.IsInsideBoard(nextHeadLoc) ||
+							snek.HeadIsInsiteTile(nextHeadLoc))
+						{
+							++lostLives;
+							gameIsOver = true;
+						}
+						else
+						{
+							if (nextHeadLoc == goal.GetLocation())
+							{
+								score.IncreaseScore();
+								snek.Grow();
+								goal.Respawn(rng, brd, snek);
+
+								if (chosenMode == 2)
+								{
+									brd.SpawnObstacle(rng, snek, goal);
+								}
+							}
+							snek.MoveBy(delta_loc);
+
+							HighGoalBehaviour();
+						}
+					}
+				}
+			}
+			else
+			{
+				snakeSizeDecreaseTimer += dt;
+
+				if (snek.GetCurrentSize() >= (snekSizeBeforeCol / 2 + 2) )
+				{
+					if (snakeSizeDecreaseTimer >= 0.3f)
+					{
+						snek.DecreaseSize();
+						snakeSizeDecreaseTimer = 0.0f;
+					}
 				}
 				else
 				{
-					if (nextHeadLoc == goal.GetLocation() )
-					{
-						score.IncreaseScore();
-						snek.Grow();
-						goal.Respawn(rng, brd, snek);
-
-						if (chosenMode == 2)
-						{
-							brd.SpawnObstacle(rng, snek, goal);
-						}
-					}
-					snek.MoveBy(delta_loc);
-
-
-					HighGoalBehaviour();
+					touchedAnObstacle = false;
 				}
 			}
 
@@ -130,25 +155,6 @@ void Game::UpdateModel()
 		{
 			AskToPlayAgain();
 		}
-			
-
-		/* I NEED THIS FOR POISON MODE
-		
-		++snekMoveCounter;
-		if (snekMoveCounter >= snekPeriod)
-		{
-			snekMoveCounter = 0;
-			Location nextHeadLoc = snek.GetNextHeadLocation(delta_loc);
-			old_delta_loc = delta_loc;
-			if (!brd.IsInsideBoard(nextHeadLoc) ||
-				snek.HeadIsInsiteTile(nextHeadLoc))
-			{
-				++lostLives;
-				gameIsOver = true;
-			}
-		}
-		
-		*/
 	}
 	else
 	{
@@ -204,10 +210,6 @@ void Game::HighGoalBehaviour()
 			for (int i = 0; i < 2; ++i)
 			{
 				snek.Grow();
-				if (chosenMode == 2)
-				{
-					brd.SpawnObstacle(rng, snek, goal);
-				}
 			}
 			for (int i = 0; i < 5; ++i)
 			{
@@ -249,7 +251,7 @@ void Game::AskToPlayAgain()
 
 void Game::ResetForNewRound()
 {
-	startingTimer = 0.0f;
+	startingDelay = 0.0f;
 	gameIsOver = false;
 	gameIsWon = false;
 
@@ -265,7 +267,7 @@ void Game::ResetForNewRound()
 
 void Game::ResetForNewGame()
 {
-	startingTimer = 0.0f;
+	startingDelay = 0.0f;
 	gameIsStarted = false;
 	gameIsOver = false;
 	gameIsWon = false;
@@ -314,7 +316,7 @@ void Game::AskToChooseMode(const Mouse & mouse)
 	if (wnd.mouse.LeftIsPressed() && chosenMode != 0)
 	{
 		gameIsStarted = true;
-		startingTimer = 0.0f;
+		startingDelay = 0.0f;
 	}
 	else
 	{
@@ -355,7 +357,7 @@ void Game::ComposeFrame()
 
 		if (gameIsStarted)
 		{
-			if (startingTimer > 4)
+			if (startingDelay > 4)
 			{
 				brd.DrawObstacles();
 				
@@ -375,13 +377,13 @@ void Game::ComposeFrame()
 			}
 			else
 			{
-				if (startingTimer <= 1)
+				if (startingDelay <= 1)
 					SpriteCodex::DrawNumber3(240, 260, gfx);
-				else if (startingTimer <= 2)
+				else if (startingDelay <= 2)
 					SpriteCodex::DrawNumber2(240, 260, gfx);
-				else if (startingTimer <= 3)
+				else if (startingDelay <= 3)
 					SpriteCodex::DrawNumber1(240, 260, gfx);
-				else if (startingTimer <= 4)
+				else if (startingDelay <= 4)
 					SpriteCodex::DrawGO(240, 260, gfx);
 			}
 		}

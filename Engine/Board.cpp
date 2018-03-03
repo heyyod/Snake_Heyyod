@@ -80,6 +80,11 @@ void Board::SpawnObstacle(std::mt19937& rng, const Snake & snake, const Goal & g
 	hasObstacle[newLoc.y * width + newLoc.x] = true;
 }
 
+void Board::DespawnObstacle(const Location & loc)
+{
+	hasObstacle[loc.y * width + loc.x] = false;
+}
+
 void Board::DrawObstacles()
 {
 	for (int y = 0; y < height; ++y)

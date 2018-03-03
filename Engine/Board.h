@@ -16,6 +16,7 @@ public:
 	int GetDimension() const;
 	bool CheckForObstacle(const Location& loc) const;
 	void SpawnObstacle( std::mt19937& rng, const class Snake& snake, const class Goal& goal);
+	void DespawnObstacle(const Location& loc);
 	void DrawObstacles();
 	void ResetObstacles();
 

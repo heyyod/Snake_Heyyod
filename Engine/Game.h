@@ -67,8 +67,6 @@ private:
 	bool gameIsWon = false;
 	bool gameIsStarted = false;
 	bool gameIsPaused = false;
-	bool inhibitPause = false;
-	bool inhibitResume = true;
 	bool playAgain = false;
 	int lostLives = 0;
 
@@ -89,5 +87,10 @@ private:
 	static constexpr int poisonModePosY = 260 + 10;
 
 	FrameTimer ft;
-	float startingTimer = 0.0f;
+	float startingDelay = 0.0f;
+
+	//OBSTACLE MODE VARIABLES
+	bool touchedAnObstacle = false;
+	int snekSizeBeforeCol;
+	float snakeSizeDecreaseTimer = 0.0f;
 };

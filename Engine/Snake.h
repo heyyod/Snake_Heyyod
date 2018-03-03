@@ -31,12 +31,14 @@ public:
 	bool IsInTile(const Location& goalLoc) const;
 	bool IsMaxSize() const;
 	Color GetBodyColor() const;
+	void DecreaseSize();
+	int GetCurrentSize() const;
 
 private:
 	bool finishedChangingColor = false;
 	static constexpr Color headColor = Colors::Green;
 	static constexpr Color bodyColor = Color( 50, 50, 0 );
-	static constexpr int nSegmentsMax = 25;
+	static constexpr int nSegmentsMax = 30;
 	Segment segments[nSegmentsMax];
 	Location deltaloc[nSegmentsMax];
 	int nSegments = 1;

@@ -97,6 +97,17 @@ Color Snake::GetBodyColor() const
 	return bodyColor;
 }
 
+void Snake::DecreaseSize()
+{
+	if( nSegments >= 2 )
+		--nSegments;
+}
+
+int Snake::GetCurrentSize() const
+{
+	return nSegments;
+}
+
 void Snake::Segment::InitHead(const Location & in_loc)
 {
 	loc = in_loc;
