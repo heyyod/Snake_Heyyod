@@ -44,14 +44,17 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	float dt = ft.Mark();
+	startingTimer += dt;
+
 	if (wnd.kbd.KeyIsPressed(VK_RETURN) && gameIsPaused)
 	{
 		gameIsPaused = false;
 	}
 
-	if (gameIsStarted && !gameIsPaused)
+	if (gameIsStarted && !gameIsPaused )
 	{
-		if (!gameIsOver && !gameIsWon)
+		if (!gameIsOver && !gameIsWon && startingTimer > 4.0f)
 		{
 			//MOVE THE SNAKE
 			if (wnd.kbd.KeyIsPressed(VK_UP) && old_delta_loc.y != 1)
@@ -261,32 +264,30 @@ void Game::ChooseMode(const Mouse & mouse)
 		if ((mouseY >= (normalModePosY - 9)) && (mouseY <= (normalModePosY + 9)))
 		{
 			chosenMode = 1;
-			if (wnd.mouse.LeftIsPressed())
-			{
-				gameIsStarted = true;
-			}
 		}
 		else if ((mouseY >= (obstacleModePosY - 9)) && (mouseY <= (obstacleModePosY + 9)))
 		{
 			chosenMode = 2;
-			if (wnd.mouse.LeftIsPressed())
-			{
-				gameIsStarted = true;
-			}
 		}
 		else if ((mouseY >= (poisonModePosY - 9)) && (mouseY <= (poisonModePosY + 9)))
 		{
 			chosenMode = 3;
-			if (wnd.mouse.LeftIsPressed())
-			{
-				gameIsStarted = true;
-			}
 		}
 		else
 			chosenMode = 0;
 	}
 	else
 		chosenMode = 0;
+
+	if (wnd.mouse.LeftIsPressed())
+	{
+		gameIsStarted = true;
+		startingTimer = 0.0f;
+	}
+	else
+	{
+		gameIsStarted = false;
+	}
 }
 
 void Game::NormalMode()
@@ -326,27 +327,37 @@ void Game::ComposeFrame()
 
 		if (gameIsStarted)
 		{
-			goal.Draw(brd);
-			if (highGoalSpawned)
+			if (startingTimer > 4)
 			{
-				highgoal.UpdateColor();
-				highgoal.Draw(brd);
-			}
-			snek.Draw(brd);
+				goal.Draw(brd);
+				if (highGoalSpawned)
+				{
+					highgoal.UpdateColor();
+					highgoal.Draw(brd);
+				}
+				snek.Draw(brd);
 
-			if (gameIsPaused)
-			{
-				SpriteCodex::DrawPause(157, 230, gfx);
+				if (gameIsPaused)
+				{
+					SpriteCodex::DrawPause(157, 230, gfx);
+				}
 			}
-		}
-		else
-		{
-			SpriteCodex::DrawTitle(133, 200, gfx);
+			else
+			{
+				if (startingTimer <= 1)
+					SpriteCodex::DrawNumber3(240, 260, gfx);
+				else if (startingTimer <= 2)
+					SpriteCodex::DrawNumber2(240, 260, gfx);
+				else if (startingTimer <= 3)
+					SpriteCodex::DrawNumber1(240, 260, gfx);
+				else if (startingTimer <= 4)
+					SpriteCodex::DrawGO(240, 260, gfx);
+			}
 		}
 
 		if (gameIsOver)
 		{
-			SpriteCodex::DrawGameOver(198, 268, gfx);
+			SpriteCodex::DrawGameOver(198, 230, gfx);
 			if (lostLives < 3)
 			{
 				SpriteCodex::DrawPressC(165, 465, gfx);

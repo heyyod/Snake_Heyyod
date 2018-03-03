@@ -95,4 +95,5 @@ private:
 	static constexpr int poisonModePosY = 260 + 10;
 
 	FrameTimer ft;
+	float startingTimer = 0.0f;
 };
