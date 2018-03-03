@@ -75,7 +75,7 @@ bool Snake::HeadIsInsiteTile(const Location& headLoc) const
 	return false;
 }
 
-bool Snake::GoalIsInTile(const Location& goalLoc) const
+bool Snake::IsInTile(const Location& goalLoc) const
 {
 	for (int i = 0; i <= nSegments; ++i)
 	{

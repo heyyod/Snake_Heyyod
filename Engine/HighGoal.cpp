@@ -15,7 +15,7 @@ void HighGoal::Respawn(std::mt19937 & rng, const Board & brd, const Snake & snak
 	{
 		newLoc.x = xDist(rng);
 		newLoc.y = yDist(rng);
-	} while (snake.GoalIsInTile(newLoc));
+	} while (snake.IsInTile(newLoc));
 
 	loc = newLoc;
 }

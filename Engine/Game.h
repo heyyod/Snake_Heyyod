@@ -43,18 +43,12 @@ public:
 private:
 	void ComposeFrame();
 	void UpdateModel();
-	void GameAdjustments();
-	void BaseGoalBehaniour();
+	void TimingAdjustments();
 	void HighGoalBehaviour();
 	void AskToPlayAgain();
 	void ResetForNewRound();
 	void ResetForNewGame();
-	void ChooseMode(const Mouse& mouse);
-
-	// MODES
-	void NormalMode();
-	void ObstacleMode();
-	void PoisonMode();
+	void AskToChooseMode(const Mouse& mouse);
 
 private:
 	MainWindow& wnd;

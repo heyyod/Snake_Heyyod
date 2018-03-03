@@ -28,7 +28,7 @@ public:
 	void Draw( Board& brd );
 	Location GetNextHeadLocation(const Location& delta_loc) const;
 	bool HeadIsInsiteTile(const Location& headLoc) const;
-	bool GoalIsInTile(const Location& goalLoc) const;
+	bool IsInTile(const Location& goalLoc) const;
 	bool IsMaxSize() const;
 	Color GetBodyColor() const;
 

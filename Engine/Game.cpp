@@ -74,26 +74,44 @@ void Game::UpdateModel()
 				delta_loc = { 1,0 };
 			}
 
-			GameAdjustments();
-
+			TimingAdjustments();
+			++snekMoveCounter;
+			
+			if (snekMoveCounter >= snekPeriod)
 			{
-				++snekMoveCounter;
-				if (snekMoveCounter >= snekPeriod)
+				snekMoveCounter = 0;
+				Location nextHeadLoc = snek.GetNextHeadLocation(delta_loc);
+				old_delta_loc = delta_loc;
+				
+				if ( chosenMode == 2 && brd.CheckForObstacle(nextHeadLoc))
 				{
-					snekMoveCounter = 0;
-					Location nextHeadLoc = snek.GetNextHeadLocation(delta_loc);
-					old_delta_loc = delta_loc;
-					if (!brd.IsInsideBoard(nextHeadLoc) ||
-						snek.HeadIsInsiteTile(nextHeadLoc))
+					++lostLives;
+					gameIsOver = true;
+				}
+
+				if (!brd.IsInsideBoard(nextHeadLoc) ||
+					snek.HeadIsInsiteTile(nextHeadLoc))
+				{
+					++lostLives;
+					gameIsOver = true;
+				}
+				else
+				{
+					if (nextHeadLoc == goal.GetLocation() )
 					{
-						++lostLives;
-						gameIsOver = true;
+						score.IncreaseScore();
+						snek.Grow();
+						goal.Respawn(rng, brd, snek);
+
+						if (chosenMode == 2)
+						{
+							brd.SpawnObstacle(rng, snek, goal);
+						}
 					}
-					else
-					{
-						BaseGoalBehaniour();
-						HighGoalBehaviour();
-					}
+					snek.MoveBy(delta_loc);
+
+
+					HighGoalBehaviour();
 				}
 			}
 
@@ -112,15 +130,34 @@ void Game::UpdateModel()
 		{
 			AskToPlayAgain();
 		}
+			
+
+		/* I NEED THIS FOR POISON MODE
+		
+		++snekMoveCounter;
+		if (snekMoveCounter >= snekPeriod)
+		{
+			snekMoveCounter = 0;
+			Location nextHeadLoc = snek.GetNextHeadLocation(delta_loc);
+			old_delta_loc = delta_loc;
+			if (!brd.IsInsideBoard(nextHeadLoc) ||
+				snek.HeadIsInsiteTile(nextHeadLoc))
+			{
+				++lostLives;
+				gameIsOver = true;
+			}
+		}
+		
+		*/
 	}
 	else
 	{
-		ChooseMode(wnd.mouse);
+		AskToChooseMode(wnd.mouse);
 	}
 }
 
 // APPLIES TO NORMAL AND OBSTACLE MODE ONLY
-void Game::GameAdjustments()
+void Game::TimingAdjustments()
 {
 	//CHANGE SPEED AND HIGH GOAL SPAWN TIME
 	{
@@ -155,33 +192,22 @@ void Game::GameAdjustments()
 	}
 }
 
-void Game::BaseGoalBehaniour()
-{
-	const bool eating = snek.GoalIsInTile(goal.GetLocation());
-	if (eating)
-	{
-		snek.Grow();
-		score.IncreaseScore();
-	}
-	snek.MoveBy(delta_loc);
-	if (eating)
-	{
-		goal.Respawn(rng, brd, snek);
-	}
-}
-
 void Game::HighGoalBehaviour()
 {
 	if (highGoalSpawned)
 	{
 		countToDespawnHighGoal++;
 
-		const bool eatingHighGoal = snek.GoalIsInTile(highgoal.GetLocation());
+		const bool eatingHighGoal = snek.IsInTile(highgoal.GetLocation());
 		if (eatingHighGoal)
 		{
 			for (int i = 0; i < 2; ++i)
 			{
 				snek.Grow();
+				if (chosenMode == 2)
+				{
+					brd.SpawnObstacle(rng, snek, goal);
+				}
 			}
 			for (int i = 0; i < 5; ++i)
 			{
@@ -248,6 +274,8 @@ void Game::ResetForNewGame()
 	snekPeriod = 30;
 	delta_loc = { 1,0 };
 
+	brd.ResetObstacles();
+
 	goal.Respawn(rng, brd, snek);
 
 	countToSpawnHighGoal = 0;
@@ -258,7 +286,7 @@ void Game::ResetForNewGame()
 	score.Reset();
 }
 
-void Game::ChooseMode(const Mouse & mouse)
+void Game::AskToChooseMode(const Mouse & mouse)
 {
 	const int mouseX = wnd.mouse.GetPosX();
 	const int mouseY = wnd.mouse.GetPosY();
@@ -292,10 +320,6 @@ void Game::ChooseMode(const Mouse & mouse)
 	{
 		gameIsStarted = false;
 	}
-}
-
-void Game::NormalMode()
-{
 }
 
 void Game::ComposeFrame()
@@ -333,13 +357,19 @@ void Game::ComposeFrame()
 		{
 			if (startingTimer > 4)
 			{
-				goal.Draw(brd);
-				if (highGoalSpawned)
+				if (chosenMode == 1 || chosenMode == 2)
 				{
-					highgoal.UpdateColor();
-					highgoal.Draw(brd);
+					goal.Draw(brd);
+					if (highGoalSpawned)
+					{
+						highgoal.UpdateColor();
+						highgoal.Draw(brd);
+					}
+					snek.Draw(brd);
+					
+					if( chosenMode == 2)
+						brd.DrawObstacles();
 				}
-				snek.Draw(brd);
 
 				if (gameIsPaused)
 				{
