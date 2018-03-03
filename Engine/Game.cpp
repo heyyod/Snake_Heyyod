@@ -357,19 +357,16 @@ void Game::ComposeFrame()
 		{
 			if (startingTimer > 4)
 			{
-				if (chosenMode == 1 || chosenMode == 2)
+				brd.DrawObstacles();
+				
+				goal.Draw(brd);
+				if (highGoalSpawned)
 				{
-					goal.Draw(brd);
-					if (highGoalSpawned)
-					{
-						highgoal.UpdateColor();
-						highgoal.Draw(brd);
-					}
-					snek.Draw(brd);
-					
-					if( chosenMode == 2)
-						brd.DrawObstacles();
+					highgoal.UpdateColor();
+					highgoal.Draw(brd);
 				}
+				
+				snek.Draw(brd);
 
 				if (gameIsPaused)
 				{
